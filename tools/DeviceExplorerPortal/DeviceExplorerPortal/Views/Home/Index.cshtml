@@ -1,0 +1,35 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-theme.css" rel="stylesheet" />
+    <title>Index</title>
+    <style>
+        .btn a {
+            color: white;
+            text-decoration: none;
+        }
+
+        body {
+            background-color: #F1F1F1;
+        }
+    </style>
+</head>
+<body>
+    <div class="text-center">
+        <h1>Welcome to DeviceExplorer</h1>
+    </div>
+    <div class="text-center">
+        @Html.ActionLink("Configuration", "Index", "Configuration")
+        @Html.ActionLink("Management", "Index", "Management")
+        @Html.ActionLink("Data", "Index", "Data")
+        @Html.ActionLink("Messages To Device", "Index", "MessageToDevice")
+    </div>
+</body>
+</html>

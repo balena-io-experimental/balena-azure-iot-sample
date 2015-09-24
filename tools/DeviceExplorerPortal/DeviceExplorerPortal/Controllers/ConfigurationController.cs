@@ -1,29 +1,31 @@
-﻿using System.Threading.Tasks;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using DeviceExplorerPortal.Models;
 
 namespace DeviceExplorerPortal.Controllers
 {
-    public class ManagementController : Controller
+    public class ConfigurationController : Controller
     {
-        public async Task<ActionResult> Index()
-        {
-            var devicesProcessor = new DevicesProcessor();
-            return View("Index", await devicesProcessor.GetDevices());
-        }
-
-        public ActionResult CopyConnectionString(string id)
+        // GET: Configuration
+        public ActionResult Index()
         {
             return View();
         }
 
+        // GET: Configuration/Details/5
+        public ActionResult Details(int id)
+        {
+            return View();
+        }
+
+        // GET: Configuration/Create
         public ActionResult Create()
         {
             return View();
         }
 
+        // POST: Configuration/Create
         [HttpPost]
-        public ActionResult Create(DeviceEntity device)
+        public ActionResult Create(ConnectionInformation connectionInformation)
         {
             try
             {
@@ -36,5 +38,6 @@ namespace DeviceExplorerPortal.Controllers
                 return View();
             }
         }
+        
     }
 }

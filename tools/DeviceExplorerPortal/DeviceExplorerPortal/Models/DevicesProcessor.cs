@@ -1,107 +1,68 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Microsoft.Azure.Devices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Web.UI.WebControls;
 
 namespace DeviceExplorerPortal.Models
 {
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Microsoft.Azure.Devices;
+
     public class DevicesProcessor
     {
-        private List<DeviceEntity> listOfDevices;
-        private RegistryManager registryManager;
-        private String iotHubConnectionString;
-        private int maxCountOfDevices;
-        private String protocolGatewayHostName;
+        private readonly List<DeviceEntity> _listOfDevices;
+        private readonly RegistryManager _registryManager;
+        private readonly string _iotHubConnectionString;
+        private readonly int _maxCountOfDevices;
+        private readonly string _protocolGatewayHostName;
+
+        public DevicesProcessor()
+        {
+            _listOfDevices = new List<DeviceEntity>();
+            _iotHubConnectionString = @"HostName=iot-device-client.df.azure-devices-int.net;SharedAccessKeyName=iothubowner;SharedAccessKey=XDjSeiBsFJNcNqjgr5yQNt/dcIxLyVASbMQVkeGLCCc=";
+            _maxCountOfDevices = 1000;
+            _protocolGatewayHostName = string.Empty;
+            _registryManager = RegistryManager.CreateFromConnectionString(_iotHubConnectionString);
+        }
 
         public DevicesProcessor(string iotHubConnenctionString, int devicesCount, string protocolGatewayName)
         {
-            this.listOfDevices = new List<DeviceEntity>();
-            this.iotHubConnectionString = iotHubConnenctionString;
-            this.maxCountOfDevices = devicesCount;
-            this.protocolGatewayHostName = protocolGatewayName;
-            this.registryManager = RegistryManager.CreateFromConnectionString(iotHubConnectionString);
+            _listOfDevices = new List<DeviceEntity>();
+            _iotHubConnectionString = iotHubConnenctionString;
+            _maxCountOfDevices = devicesCount;
+            _protocolGatewayHostName = protocolGatewayName;
+            _registryManager = RegistryManager.CreateFromConnectionString(_iotHubConnectionString);
         }
 
         public async Task<List<DeviceEntity>> GetDevices()
         {
-            try
-            {
-                DeviceEntity deviceEntity;
-                var devices = await registryManager.GetDevicesAsync(maxCountOfDevices);
+            var devices = await _registryManager.GetDevicesAsync(_maxCountOfDevices);
 
-                if (devices != null)
+            if (devices != null)
+            {
+                foreach (var device in devices)
                 {
-                    foreach (var device in devices)
+                    var deviceEntity = new DeviceEntity(_iotHubConnectionString, _protocolGatewayHostName)
                     {
-                        deviceEntity = new DeviceEntity()
-                        {
-                            Id = device.Id,
-                            ConnectionState = device.ConnectionState.ToString(),
-                            ConnectionString = CreateDeviceConnectionString(device),
-                            LastActivityTime = device.LastActivityTime,
-                            LastConnectionStateUpdatedTime = device.ConnectionStateUpdatedTime,
-                            LastStateUpdatedTime = device.StatusUpdatedTime,
-                            MessageCount = device.CloudToDeviceMessageCount,
-                            State = device.Status.ToString(),
-                            SuspensionReason = device.StatusReason
-                        };
+                        Id = device.Id,
+                        ConnectionState = device.ConnectionState.ToString(),
+                        LastActivityTime = device.LastActivityTime,
+                        LastConnectionStateUpdatedTime = device.ConnectionStateUpdatedTime,
+                        LastStateUpdatedTime = device.StatusUpdatedTime,
+                        MessageCount = device.CloudToDeviceMessageCount,
+                        State = device.Status.ToString(),
+                        SuspensionReason = device.StatusReason
+                    };
 
-                        if (device.Authentication != null &&
-                            device.Authentication.SymmetricKey != null)
-                        {
-                            deviceEntity.PrimaryKey = device.Authentication.SymmetricKey.PrimaryKey;
-                            deviceEntity.SecondaryKey = device.Authentication.SymmetricKey.SecondaryKey;
-                        }
-
-                        listOfDevices.Add(deviceEntity);
+                    if (device.Authentication?.SymmetricKey != null)
+                    {
+                        deviceEntity.PrimaryKey = device.Authentication.SymmetricKey.PrimaryKey;
+                        deviceEntity.SecondaryKey = device.Authentication.SymmetricKey.SecondaryKey;
                     }
+
+                    _listOfDevices.Add(deviceEntity);
                 }
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            return listOfDevices;
-        }
-
-        private String CreateDeviceConnectionString(Device device)
-        {
-            StringBuilder deviceConnectionString = new StringBuilder();
-
-            var hostName = String.Empty;
-            var tokenArray = iotHubConnectionString.Split(';');
-            for (int i = 0; i < tokenArray.Length; i++)
-            {
-                var keyValueArray = tokenArray[i].Split('=');
-                if (keyValueArray[0] == "HostName")
-                {
-                    hostName = tokenArray[i] + ';';
-                    break;
-                }
-            }
-
-            if (!String.IsNullOrWhiteSpace(hostName))
-            {
-                deviceConnectionString.Append(hostName);
-                deviceConnectionString.Append("CredentialScope=Device;");
-                deviceConnectionString.AppendFormat("DeviceId={0}", device.Id);
-
-                if (device.Authentication != null &&
-                    device.Authentication.SymmetricKey != null)
-                {
-                    deviceConnectionString.AppendFormat(";SharedAccessKey={0}", device.Authentication.SymmetricKey.PrimaryKey);
-                }
-
-                if (this.protocolGatewayHostName.Length > 0)
-                {
-                    deviceConnectionString.AppendFormat(";GatewayHostName=ssl://{0}:8883", this.protocolGatewayHostName);
-                }
-            }
-
-            return deviceConnectionString.ToString();
+            return _listOfDevices;
         }
     }
 }

@@ -1,15 +1,25 @@
-﻿using System.Threading.Tasks;
-using System.Web.Mvc;
-using DeviceExplorerPortal.Models;
-
-namespace DeviceExplorerPortal.Controllers
+﻿namespace DeviceExplorerPortal.Controllers
 {
+    using System;
+    using System.Threading.Tasks;
+    using System.Web.Mvc;
+    using Kendo.Mvc.Extensions;
+    using Kendo.Mvc.UI;
+    using Models;
+
     public class ManagementController : Controller
     {
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> List()
         {
             var devicesProcessor = new DevicesProcessor();
-            return View("Index", await devicesProcessor.GetDevices());
+            return View("List", await devicesProcessor.GetDevices());
+        }
+
+        public ActionResult ListGrid([DataSourceRequest]DataSourceRequest request)
+        {
+            var devicesProcessor = new DevicesProcessor();
+            var result = Json(devicesProcessor.GetDevices().Result.ToDataSourceResult(request));
+            return result;
         }
 
         public ActionResult CopyConnectionString(string id)
@@ -17,24 +27,41 @@ namespace DeviceExplorerPortal.Controllers
             return View();
         }
 
-        public ActionResult Create()
+        public ActionResult CreateDevice()
         {
             return View();
         }
 
         [HttpPost]
-        public ActionResult Create(DeviceEntity device)
+        public async Task<ActionResult> CreateDevice(DeviceCreation device)
         {
             try
             {
-                // TODO: Add insert logic here
-
-                return RedirectToAction("Index");
+                var devicesProcessor = new DevicesProcessor();
+                await devicesProcessor.CreateDevice(device);
+                return RedirectToAction("List");
             }
             catch
             {
                 return View();
             }
+        }
+
+        [HttpPost]
+        public ActionResult GenerateDeviceKeys()
+        {
+            var updatedDeviceCreation = new DeviceCreation
+            {
+                PrimaryKey = DevicesProcessor.GeneratePrimaryKey(),
+                SecondaryKey = DevicesProcessor.GenerateSecondaryKey()
+            };
+            return Json(updatedDeviceCreation);
+        }
+
+        [HttpPost]
+        public ActionResult GenerateDeviceId()
+        {
+            return Json("device" + Guid.NewGuid());
         }
     }
 }

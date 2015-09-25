@@ -1,4 +1,6 @@
-﻿using System.Web.UI.WebControls;
+﻿using System;
+using System.Web.UI.WebControls;
+using Microsoft.Azure.Devices.Common;
 
 namespace DeviceExplorerPortal.Models
 {
@@ -63,6 +65,40 @@ namespace DeviceExplorerPortal.Models
                 }
             }
             return _listOfDevices;
+        }
+
+        public async Task<bool> CreateDevice(DeviceCreation deviceToBeCreated)
+        {
+            try
+            {
+                var device = new Device(deviceToBeCreated.Id)
+                {
+                    Authentication = new AuthenticationMechanism
+                    {
+                        SymmetricKey = new SymmetricKey
+                        {
+                            PrimaryKey = deviceToBeCreated.PrimaryKey,
+                            SecondaryKey = deviceToBeCreated.SecondaryKey
+                        }
+                    }
+                };
+                await _registryManager.AddDeviceAsync(device);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static string GeneratePrimaryKey()
+        {
+            return CryptoKeyGenerator.GenerateKey(32);
+        }
+
+        public static string GenerateSecondaryKey()
+        {
+            return CryptoKeyGenerator.GenerateKey(32);
         }
     }
 }

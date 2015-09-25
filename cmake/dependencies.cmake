@@ -1,0 +1,10 @@
+# Find dependencies
+
+# QPID PROTON-C
+#find_package(QPID_PROTON REQUIRED)
+#if(QPID_PROTON_FOUND)
+ #   include_directories(${QPID_PROTON_INCLUDE_DIR})
+  #  list(APPEND ${PROJECT_NAME}_EXTERNAL_LIBRARIES "${QPID_PROTON_LIBRARY}")
+#endif(QPID_PROTON_FOUND)
+
+

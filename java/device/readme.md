@@ -1,6 +1,6 @@
-# Microsoft Azure IoT Device SDK for Java
+# Microsoft Azure IoT device SDK for Java
 
-The Microsoft Azure IoT Device SDK for Java facilitates building devices and applications that connect and are managed by Azure IoT Suite services.
+The Microsoft Azure IoT device SDK for Java facilitates building devices and applications that connect and are managed by Azure IoT Suite services.
 
 The device library consists of a set of reusable components with abstract interfaces that enable pluggability between stock and custom modules.
 
@@ -17,36 +17,39 @@ The device library consists of a set of reusable components with abstract interf
 ## Application development guidelines
 
 - [Setup your development environment][devbox-setup]
-- [Try some samples][getstarted]
-- [Get started with Azure IoT client application using Java on Windows](guide_getting_started_iot_client_java_windows.md)
-- [How to use Device Explorer for IoT Hub devices](../../tools/DeviceExplorer/doc/how_to_use_device_explorer.md) 
+- [Run the Java sample][run-java-sample]
+- [How to build an IoTHub Java application from scrtach on Windows][how-to-build-a-java-app-from-scratch]
+- [How to use Device Explorer for IoT Hub devices](../../tools/DeviceExplorer/doc/how_to_use_device_explorer.md)
 
 ## Folder structure of repository
 
 All of the Java specific resources are located in the **java** folder.
 
-### doc
+### /doc
 
 This folder contains setup and getting started documents for Java.
 
 - [Preparing your development environment][devbox-setup]
 - [Getting started - running a Java sample application][getstarted]
 
-### iothub-java-client
+### /iothub-java-client
 
 This folder contains the client library for Java.
 
-### samples
+### /samples
 
 This folder contains various Java samples that illustrate how to use the client library.
 
-## API reference
+## API reference documentation
 
-API documentation can be found here:
+API reference documentation can be found online at http://azure.github.io/azure-iot-sdks/java/api_reference/index.html.
+
+If you clone the repository to your local machine, you can also find a copy of the API reference documents here:
 
 ```
 {IoT device SDK root}/java/device/doc/api_reference/index.html
 ```
 
 [devbox-setup]: doc/devbox_setup.md
-[getstarted]: doc/run_sample_on_java.md
+[run-java-sample]: doc/run_sample_on_java.md
+[how-to-build-a-java-app-from-scratch]: doc/how_to_build_a_java_app_from_scratch.md

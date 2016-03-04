@@ -10,7 +10,14 @@ var Message = require('azure-iot-device').Message;
 
 // String containing Hostname, Device Id & Device Key in the following formats:
 //  "HostName=<iothub_host_name>;DeviceId=<device_id>;SharedAccessKey=<device_key>"
-var connectionString = '[IoT Hub device connection string]';
+var connectionString = [
+  'HostName=',
+  process.env.IOT_HUB_HOST,
+  ';DeviceId=',
+  process.env.IOT_HUB_DEVICE_ID,
+  ';SharedAccessKey=',
+  process.env.IOT_HUB_DEVICE_KEY
+].join('');
 var deviceId = ConnectionString.parse(connectionString).DeviceId;
 
 // Sensors data
@@ -44,9 +51,9 @@ var deviceMetaData = {
     'CreatedTime': '2015-09-21T20:28:55.5448990Z',
     'DeviceState': 'normal',
     'UpdatedTime': null,
-    'Manufacturer': 'Contoso Inc.',
-    'ModelNumber': 'MD-909',
-    'SerialNumber': 'SER9090',
+    'Manufacturer': 'resin.io',
+    'ModelNumber': 'raspberry-pi2',
+    'SerialNumber': process.env.RESIN_DEVICE_UUID,
     'FirmwareVersion': '1.10',
     'Platform': 'node.js',
     'Processor': 'ARM',
